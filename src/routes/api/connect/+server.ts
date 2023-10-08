@@ -1,21 +1,18 @@
-import { json } from "@sveltejs/kit"
+import { error, json } from "@sveltejs/kit"
 import { mnemonicToAccount } from "viem/accounts"
 
 export async function POST() {
   // Check environment variables
-  if (
-    !process.env.APP_FID ||
-    !process.env.APP_MNEMONIC ||
-    !process.env.NEYNAR_API_KEY ||
-    !process.env.NEYNAR_ENDPOINT
-  ) {
+  const {
+    APP_FID: appFid,
+    APP_MNEMONIC: appMnemonic,
+    NEYNAR_API_KEY: neynarApiKey,
+    NEYNAR_ENDPOINT: neynarEndpoint,
+  } = process.env
+
+  if (!appFid || !appMnemonic || !neynarApiKey || !neynarEndpoint) {
     throw new Error("Environment variables not set")
   }
-
-  const appFid = process.env.APP_FID
-  const appMnemonic = process.env.APP_MNEMONIC
-  const neynarApiKey = process.env.NEYNAR_API_KEY
-  const neynarEndpoint = process.env.NEYNAR_ENDPOINT
 
   const SIGNED_KEY_REQUEST_VALIDATOR_EIP_712_DOMAIN = {
     name: "Farcaster SignedKeyRequestValidator",
@@ -41,9 +38,9 @@ export async function POST() {
       },
     })
     signerResponse = await signerRequest.json()
-  } catch (error) {
-    console.error(error)
-    return json({ status: 500, error: "Failed to create signer" })
+  } catch (e) {
+    console.error(e)
+    throw error(500, "Failed to create signer")
   }
 
   // Generate signature for signer
@@ -65,9 +62,9 @@ export async function POST() {
         deadline: BigInt(deadline),
       },
     })
-  } catch (error) {
-    console.error(error)
-    return json({ status: 500, error: "Failed to generate signature" })
+  } catch (e) {
+    console.error(e)
+    throw error(500, "Failed to generate signature")
   }
 
   // Register signed key via Neynar API
@@ -91,16 +88,16 @@ export async function POST() {
       }
     )
     signedKeyResponse = await signedKeyRequest.json()
-  } catch (error) {
-    console.error(error)
-    return json({ status: 500, error: "Failed to register signed key" })
+  } catch (e) {
+    console.error(e)
+    throw error(500, "Failed to register signed key")
   }
 
   // Return signer details to client
   const clientResponse = {
     status: 200,
-    signer_uuid: signerResponse.signer_uuid,
-    deeplink_url: signedKeyResponse.deeplink_url,
+    signerUuid: signerResponse.signer_uuid,
+    deeplinkUrl: signedKeyResponse.signer_approval_url,
   }
 
   console.info("Successfully created signer:", clientResponse)
