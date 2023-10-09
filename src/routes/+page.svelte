@@ -1,4 +1,4 @@
-<script type="ts">
+<script lang="ts">
   const shortcutUrl = process.env.VITE_SHORTCUT_URL
 </script>
 
