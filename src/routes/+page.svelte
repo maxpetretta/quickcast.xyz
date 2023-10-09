@@ -1,4 +1,12 @@
-<h1>Welcome to SvelteKit</h1>
+<script type="ts">
+  const shortcutUrl = process.env.SHORTCUT_URL
+</script>
+
+<h1>Quickcast</h1>
 <p>
-  Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation
+  A Minimum Viable Client for Farcaster, built with iOS Shortcuts and <a
+    href="https://neynar.xyz">Neynar</a
+  >.
 </p>
+<a href={shortcutUrl}>Download Shortcut</a>
+<a href="https://github.com/maxpetretta/quickcast.xyz">GitHub Repo</a>
