@@ -4,7 +4,7 @@
 
 <h1>Quickcast</h1>
 <p>
-  A Minimum Viable Client for Farcaster, built with iOS Shortcuts and <a
+  A minimum viable client for Farcaster, built with iOS Shortcuts and <a
     href="https://neynar.xyz">Neynar</a
   >.
 </p>
