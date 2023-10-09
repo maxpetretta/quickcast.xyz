@@ -13,6 +13,7 @@
     "format": "prettier --plugin-search-dir . --write ."
   },
   "dependencies": {
+    "@vercel/kv": "^0.2.3",
     "viem": "^1.15.4"
   },
   "devDependencies": {

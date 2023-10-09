@@ -1,5 +1,5 @@
 <script type="ts">
-  const shortcutUrl = process.env.SHORTCUT_URL
+  const shortcutUrl = process.env.VITE_SHORTCUT_URL
 </script>
 
 <h1>Quickcast</h1>
