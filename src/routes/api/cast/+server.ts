@@ -1,4 +1,5 @@
 import { error, json } from "@sveltejs/kit"
+import { kv } from "@vercel/kv"
 
 export async function POST({ request }) {
   // Check environment variables
@@ -11,13 +12,27 @@ export async function POST({ request }) {
 
   // Get cast content from request
   const { signerUuid, content, parent } = await request.json()
-  console.log("🚀 ~ file: +server.ts:12 ~ POST ~ signerUuid:", signerUuid)
-  console.log("🚀 ~ file: +server.ts:14 ~ POST ~ content:", content)
-  console.log("🚀 ~ file: +server.ts:18 ~ POST ~ parent:", parent)
 
   if (!signerUuid || !content) {
     console.error("Request body missing, signerUuid:", signerUuid)
     throw error(400, "Request body missing")
+  }
+
+  // Update the signer's connection status
+  let signerResponse
+  try {
+    const signerRequest = await fetch(
+      `${neynarEndpoint}/signer?signer_uuid=${signerUuid}&api_key=${neynarApiKey}`
+    )
+    signerResponse = await signerRequest.json()
+
+    // Save signer response to kv
+    if (signerResponse.status === "approved" && signerResponse.fid) {
+      await kv.set(signerResponse.fid, signerResponse, { nx: true })
+    }
+  } catch (e) {
+    console.error(e)
+    throw error(500, "Failed to update signer connection status")
   }
 
   // Write cast via Neynar API
@@ -37,7 +52,6 @@ export async function POST({ request }) {
       }),
     })
     castResponse = await castRequest.json()
-    console.log("🚀 ~ file: +server.ts:39 ~ POST ~ castResponse:", castResponse)
 
     if (!castRequest.ok || !castResponse.cast.hash) {
       throw new Error(castResponse.message)

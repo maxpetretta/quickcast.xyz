@@ -1,4 +1,5 @@
 import { error, json } from "@sveltejs/kit"
+import { kv } from "@vercel/kv"
 import { mnemonicToAccount } from "viem/accounts"
 
 export async function POST() {
@@ -88,6 +89,9 @@ export async function POST() {
       }
     )
     signedKeyResponse = await signedKeyRequest.json()
+
+    // Save signer response to kv
+    await kv.set(signerResponse.signer_uuid, signerResponse, { nx: true })
   } catch (e) {
     console.error(e)
     throw error(500, "Failed to register signed key")
