@@ -2,7 +2,7 @@
   const shortcutUrl = import.meta.env.VITE_SHORTCUT_URL
 </script>
 
-<h1>Quickcast</h1>
+<h1 class="text-3xl">Quickcast</h1>
 <p>
   A minimum viable client for Farcaster, built with iOS Shortcuts and <a
     href="https://neynar.xyz">Neynar</a
