@@ -86,7 +86,7 @@ export async function POST() {
           deadline,
           signature,
         }),
-      }
+      },
     )
     signedKeyResponse = await signedKeyRequest.json()
 
@@ -100,8 +100,8 @@ export async function POST() {
   // Return signer details to client
   const clientResponse = {
     status: 200,
-    signerUuid: signerResponse.signer_uuid,
-    deeplinkUrl: signedKeyResponse.signer_approval_url,
+    uuid: signerResponse.signer_uuid,
+    deeplink: signedKeyResponse.signer_approval_url,
   }
 
   console.info("Successfully created signer:", clientResponse)
