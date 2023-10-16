@@ -5,10 +5,10 @@
 <div class="max-w-xl flex flex-col items-center">
   <h1 class="text-6xl font-semibold">Quickcast</h1>
   <p class="mt-4 text-center">
-    A minimum viable client for Farcaster, built with iOS Shortcuts and <a
+    The fastest way to cast on Farcaster. Built with iOS Shortcuts and <a
       class="underline underline-offset-2"
-      href="https://neynar.xyz">Neynar</a
-    >.
+      href="https://neynar.xyz">Neynar.xyz</a
+    >
   </p>
 
   <a
