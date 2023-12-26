@@ -20,11 +20,12 @@ export async function POST({ request }) {
   // Check for channel tag
   let channelId
   if (content.startsWith("/")) {
-    channelId = content.substring(1).split(" ")[0].toLowerCase()
+    channelId = content.match(/(^\/[\w-]+)/)[0].substring(1)
+
     let channelResponse
     try {
       const channelRequest = await fetch(
-        `${neynarEndpoint}/channel/search?q=${channelId}`,
+        `${neynarEndpoint}/channel/search?q=${channelId.toLowerCase()}`,
         {
           method: "GET",
           headers: {
@@ -35,7 +36,10 @@ export async function POST({ request }) {
       )
       channelResponse = await channelRequest.json()
 
-      if (!channelRequest.ok || channelId !== channelResponse.channels[0].id) {
+      if (
+        !channelRequest.ok ||
+        channelId.toLowerCase() !== channelResponse.channels[0].id
+      ) {
         throw new Error(channelResponse.message)
       }
     } catch (e) {
@@ -59,7 +63,7 @@ export async function POST({ request }) {
         signer_uuid: uuid,
         text,
         parent,
-        ...(channelId ? { channel_id: channelId } : {}), // Conditionally add channel_id
+        ...(channelId ? { channel_id: channelId.toLowerCase() } : {}), // Conditionally add channel_id
       }),
     })
     castResponse = await castRequest.json()
