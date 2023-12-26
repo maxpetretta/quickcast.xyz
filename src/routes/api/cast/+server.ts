@@ -20,7 +20,7 @@ export async function POST({ request }) {
   // Check for channel tag
   let channelId
   if (content.startsWith("/")) {
-    channelId = content.substring(1).split(" ")[0]
+    channelId = content.substring(1).split(" ")[0].toLowerCase()
     let channelResponse
     try {
       const channelRequest = await fetch(
