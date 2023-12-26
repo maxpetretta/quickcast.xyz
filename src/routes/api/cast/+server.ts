@@ -17,9 +17,37 @@ export async function POST({ request }) {
     throw error(400, "Request body missing")
   }
 
+  // Check for channel tag
+  let channelId
+  if (content.startsWith("/")) {
+    channelId = content.substring(1).split(" ")[0]
+    let channelResponse
+    try {
+      const channelRequest = await fetch(
+        `${neynarEndpoint}/channel/search?q=${channelId}`,
+        {
+          method: "GET",
+          headers: {
+            accept: "application/json",
+            api_key: neynarApiKey,
+          },
+        },
+      )
+      channelResponse = await channelRequest.json()
+
+      if (!channelRequest.ok || channelId !== channelResponse.channels[0].id) {
+        throw new Error(channelResponse.message)
+      }
+    } catch (e) {
+      console.error(e)
+      throw error(500, "Failed to get channel")
+    }
+  }
+
   // Write cast via Neynar API
   let castResponse
   try {
+    const text = content.replace(`/${channelId}`, "").trim() // Remove channel tag from text
     const castRequest = await fetch(`${neynarEndpoint}/cast`, {
       method: "POST",
       headers: {
@@ -29,8 +57,9 @@ export async function POST({ request }) {
       },
       body: JSON.stringify({
         signer_uuid: uuid,
-        text: content,
+        text,
         parent,
+        ...(channelId ? { channel_id: channelId } : {}), // Conditionally add channel_id
       }),
     })
     castResponse = await castRequest.json()
